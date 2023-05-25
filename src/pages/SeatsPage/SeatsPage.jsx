@@ -1,17 +1,54 @@
 import styled from "styled-components"
+import axios from "axios";
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function SeatsPage() {
+
+    const [acentos, setacentos] = useState(undefined);
+    const [Filme, setFilme] = useState([]);
+    const [horario, sethorario] = useState([]);
+    const [dia, setdia] = useState([]);
+    const numApi = useParams();
+
+    useEffect(() => {
+        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${numApi.horarioSelecionado}/seats`;
+        const promise = axios.get(URL);
+        promise.then((resposta) => {
+            setacentos(resposta.data.seats);
+            setFilme(resposta.data.movie);
+            console.log(resposta.data);
+            sethorario(resposta.data);
+            setdia(resposta.data.day);
+            console.log(resposta.data.day)
+        }); //deu certo
+
+        promise.catch((erro) => {
+            console.log(erro.response.data);
+        }); // deu errado
+
+    }, []);
+
+    if (acentos === undefined) {
+        return (
+            <PageContainer>
+                Carregando....
+            </PageContainer>
+        )
+    }
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
-            <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+            <SeatsContainer >
+                {acentos.map((acentos) => (
+
+                    <SeatItem key={acentos.id} >{acentos.name}</SeatItem>
+
+                )
+                )}
+
             </SeatsContainer>
 
             <CaptionContainer>
@@ -36,18 +73,24 @@ export default function SeatsPage() {
                 <h1>CPF do Comprador:</h1>
                 <input placeholder="Digite seu CPF..." />
 
-                <button>
-                    <p>Reservar Assento(s)</p>
-                </button>
+
             </FormContainer>
+
+            <Buto>
+                <Link to='/pedido-confirmado' style={{ textDecoration: 'none' }} key={horario.date}>
+                    <button>
+                        <p>Reservar Assento(s)</p>
+                    </button>
+                </Link>
+            </Buto>
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={Filme.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{Filme.title}</p>
+                    <p>{dia.weekday}&nbsp;-&nbsp;{horario.name}</p>
                 </div>
             </FooterContainer>
 
@@ -81,40 +124,10 @@ const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
     margin: 20px 0;
     font-size: 18px;
-    button {
-        align-self: center;
-        width: 225px;
-        height: 42px;
-        left: 72px;
-        top: 688px;
-        background: #E8833A;
-        border-radius: 3px;
-        border: none;
-        display: flex;
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-        margin-top: 35px;
-        
-    }
-
-    button p{
-            font-family: 'Roboto';
-            font-style: normal;
-            font-weight: 400;
-            font-size: 18px;
-            line-height: 21px;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: #FFFFFF;
-           
-           
-
-        
-    }
+    
     input {
         width: calc(100vw - 60px);
         height: 51px;
@@ -142,6 +155,37 @@ const FormContainer = styled.div`
         color: #293845;
         margin-bottom: 0px;
     }
+`
+const Buto = styled.div`
+    button {
+        align-self: center;
+        width: 225px;
+        height: 42px;
+        left: 72px;
+        top: 688px;
+        background-color: #E8833A;
+        border-radius: 3px;
+        border: none;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        margin-top: 35px;
+      
+        
+    }
+
+    button p{
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 21px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #FFFFFF;
+            }
 `
 const CaptionContainer = styled.div`
     display: flex;
@@ -202,6 +246,22 @@ const SeatItem = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
+    text-decoration: none;
+    color: #000000;
+
+    p{
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 13px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        letter-spacing: 0.04em;
+        color: #000000; 
+        text-decoration: none;
+    }
 `
 const FooterContainer = styled.div`
     width: 100%;

@@ -1,6 +1,24 @@
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styled from "styled-components"
 
+
 export default function SuccessPage() {
+    const [reserva, setreserva] = useState([])
+
+    useEffect(() => {
+        const URL = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many';
+        const promise = axios.get(URL);
+        promise.then((resposta) => {
+            setreserva(resposta);
+            console.log(resposta);
+        }); //deu certo
+        promise.catch((erro) => {
+            console.log(erro.response.data);
+        }); // deu errado
+
+    }, []);
 
     return (
         <PageContainer>
@@ -24,8 +42,10 @@ export default function SuccessPage() {
                 <p>Nome: Letícia Chijo</p>
                 <p>CPF: 123.456.789-10</p>
             </TextContainer>
+            <Link to='/'  >
+                <button><p>Voltar para Home</p></button>
+            </Link>
 
-            <button><p>Voltar para Home</p></button>
         </PageContainer>
     )
 }

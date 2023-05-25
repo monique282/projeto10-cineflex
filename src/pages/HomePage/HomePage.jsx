@@ -1,26 +1,48 @@
 import styled from "styled-components"
+import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import axios from "axios";
+
 
 export default function HomePage() {
+    const [filmes, setfilmes] = useState(undefined);
+
+    useEffect(() => {
+        const URL = 'https://mock-api.driven.com.br/api/v8/cineflex/movies';
+        const promise = axios.get(URL);
+        promise.then((resposta) => {
+            setfilmes(resposta.data);
+            console.log(resposta.data);
+
+        }); //deu certo
+        promise.catch((erro) => {
+            console.log(erro.response.data);
+        }); // deu errado
+
+    }, []);
+   
+if(filmes === undefined){
+    return (
+        <PageContainer>
+            Carregando .....
+        </PageContainer>
+    )
+}
+
+
     return (
         <PageContainer>
             Selecione o filme
 
-            <ListContainer>
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
+            <ListContainer key={filmes.id}>
+                {filmes.map(filmes => (
+                    <Link to={`/horario/${filmes.id}`}>
+                        <MovieContainer key={filmes.id}>
+                            <img src={filmes.posterURL} alt="poster" />
+                        </MovieContainer>
+                    </Link>
+                )
+                )}
             </ListContainer>
 
         </PageContainer>

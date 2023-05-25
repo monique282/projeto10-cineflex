@@ -1,19 +1,34 @@
-import styled from "styled-components"
-import HomePage from "./pages/HomePage/HomePage"
-import SeatsPage from "./pages/SeatsPage/SeatsPage"
-import SessionsPage from "./pages/SessionsPage/SessionsPage"
-import SuccessPage from "./pages/SuccessPage/SuccessPage"
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import HomePage from "./pages/HomePage/HomePage";
+import SeatsPage from "./pages/SeatsPage/SeatsPage";
+import SessionsPage from "./pages/SessionsPage/SessionsPage";
+import SuccessPage from "./pages/SuccessPage/SuccessPage";
+
 
 export default function App() {
-    return (
-        <>
-           <NavContainer>CINEFLEX</NavContainer>
 
-           {/*<HomePage />*/}
-           { /*<SessionsPage />*/ }
-            {/* <SeatsPage />*/ }
-            { /*<SuccessPage /> */}
-        </>
+
+
+    axios.defaults.headers.common['Authorization'] = 'gcgzy07drRg6jm7px6bMyAeU';
+    
+
+
+    return (
+        <BrowserRouter>
+            <NavContainer>CINEFLEX</NavContainer>
+            <Routes>
+                <Route path='/' element={<HomePage/>}  />
+                <Route path='/horario/:filmeSelecionado' element={<SessionsPage  />} />
+                <Route path='/acentos/:horarioSelecionado' element={<SeatsPage />} />
+                <Route path='/pedido-confirmado' element={<SuccessPage />} />
+
+
+            </Routes>
+
+        </BrowserRouter>
     )
 }
 
