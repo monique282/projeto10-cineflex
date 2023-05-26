@@ -9,6 +9,9 @@ export default function SeatsPage() {
     const [Filme, setFilme] = useState([]);
     const [horario, sethorario] = useState([]);
     const [dia, setdia] = useState([]);
+    const [cor, setcor] = useState({});
+    const [bancos, setbancos] = useState({ ids: {}, name: '', cpf: '' });
+
     const numApi = useParams();
 
     useEffect(() => {
@@ -16,6 +19,8 @@ export default function SeatsPage() {
         const promise = axios.get(URL);
         promise.then((resposta) => {
             setacentos(resposta.data.seats);
+            // todos os acentos
+            console.log(resposta.data.seats)
             setFilme(resposta.data.movie);
             console.log(resposta.data);
             sethorario(resposta.data);
@@ -29,6 +34,22 @@ export default function SeatsPage() {
 
     }, []);
 
+    function selecionado(id) {
+        console.log(id);
+        setcor((prevSelecionados) => ({
+            ...prevSelecionados,
+            [id]: !prevSelecionados[id],
+        }));
+        //  let bancos = [...bancos];
+        setbancos((prevBancos) => ({
+            ...prevBancos,
+            ids: prevBancos.ids.includes(id)
+                ? prevBancos.ids.filter((item) => item !== id)
+                : [...prevBancos.ids, id],
+        }));
+    }
+
+    console.log(bancos);
     if (acentos === undefined) {
         return (
             <PageContainer>
@@ -37,17 +58,39 @@ export default function SeatsPage() {
         )
     }
 
+    // testar para ver se se esta false ou true
+
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer >
                 {acentos.map((acentos) => (
+                    <>
+                        {
+                            acentos.isAvailable === true ? (
+                                <SeatItem
+                                    key={acentos.id}
+                                    onClick={() => selecionado(acentos.id)}
+                                    style={{
+                                        backgroundColor: cor[acentos.id] ? 'red' : '',
+                                        border: cor[acentos.id]
+                                            ? '1px solid #0E7D71'
+                                            : '1px solid #808F9D',
+                                    }}
+                                >
+                                    {acentos.name}
+                                </SeatItem>
 
-                    <SeatItem key={acentos.id} >{acentos.name}</SeatItem>
+                            ) :
+                                <SeatItemIndisp key={acentos.id} >{acentos.name}</SeatItemIndisp>
+                        }
+                    </>
+                    // sem onclick
 
                 )
                 )}
+
 
             </SeatsContainer>
 
@@ -77,11 +120,17 @@ export default function SeatsPage() {
             </FormContainer>
 
             <Buto>
-                <Link to='/pedido-confirmado' style={{ textDecoration: 'none' }} key={horario.date}>
+                {/*mandar o post com os dados do comprador esse é o link do post*/}
+
+                <>
                     <button>
                         <p>Reservar Assento(s)</p>
                     </button>
-                </Link>
+                    {/* criar uma função no butão que manda pro cervidor , dentro da fulçao vericar se foi then, se sim pular pra proxima pagina
+                  {/*then 
+                     Link to='/pedido-confirmado' style={{ textDecoration: 'none' }} key={horario.date}*/}
+
+                </>
             </Buto>
 
             <FooterContainer>
@@ -237,6 +286,36 @@ const CaptionItem = styled.div`
 const SeatItem = styled.div`
     border: 1px solid #808F9D;         // Essa cor deve mudar
     background-color: #C3CFD9;    // Essa cor deve mudar
+    height: 25px;
+    width: 25px;
+    border-radius: 25px;
+    font-family: 'Roboto';
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px 3px;
+    text-decoration: none;
+    color: #000000;
+
+    p{
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 13px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        letter-spacing: 0.04em;
+        color: #000000; 
+        text-decoration: none;
+    }
+`
+
+const SeatItemIndisp = styled.div`
+    border: 1px solid #F7C52B;         // Essa cor deve mudar
+    background-color: #FBE192;    // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;

@@ -38,7 +38,7 @@ export default function SessionsPage() {
             <div>
                 {horarios.map(horarios => (
                     <SessionContainer key={horarios.id}>
-                        <p>{horarios.weekday}&nbsp;-&nbsp;{horarios.date}</p>
+                        <p>{`${horarios.weekday} - ${horarios.date}`}</p>
                         <ButtonsContainer >
                             {horarios.showtimes.map((showtimes) => (
                                 <Link to={`/acentos/${showtimes.id}`} key={showtimes.id}>
@@ -97,7 +97,6 @@ const SessionContainer = styled.div`
         line-height: 23px;
         display: flex;
         align-items: center;
-        letter-spacing: 0.02em;
         color: #293845;
 
     }
