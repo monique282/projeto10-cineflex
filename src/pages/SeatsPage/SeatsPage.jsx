@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function SeatsPage() {
@@ -10,9 +10,14 @@ export default function SeatsPage() {
     const [horario, sethorario] = useState([]);
     const [dia, setdia] = useState([]);
     const [cor, setcor] = useState({});
-    const [bancos, setbancos] = useState({ ids: {}, name: '', cpf: '' });
+    const [bancos, setbancos] = useState({ ids: [] });
+    const [nome, setnome] = useState('');
+    const [cpf, setcpf] = useState('');
+    const navigate = useNavigate();
+    const [info, setInfo] = useState(nome, cpf, bancos, dia, Filme, horario);
 
     const numApi = useParams();
+
 
     useEffect(() => {
         const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${numApi.horarioSelecionado}/seats`;
@@ -20,12 +25,9 @@ export default function SeatsPage() {
         promise.then((resposta) => {
             setacentos(resposta.data.seats);
             // todos os acentos
-            console.log(resposta.data.seats)
             setFilme(resposta.data.movie);
-            console.log(resposta.data);
             sethorario(resposta.data);
             setdia(resposta.data.day);
-            console.log(resposta.data.day)
         }); //deu certo
 
         promise.catch((erro) => {
@@ -57,8 +59,27 @@ export default function SeatsPage() {
             </PageContainer>
         )
     }
-
     // testar para ver se se esta false ou true
+
+    function mandarProServidor(e) {
+        e.preventDefault();
+        console.log(nome);
+        console.log(cpf);
+        // pegar os dados dos imputs 
+        // uso as variaveis de estado
+        // enviar pro servidor atravez do axios
+        const dados = {
+            ids: bancos.ids,
+            name: nome,
+            cpf: cpf
+        }
+        console.log(dados);
+        const urlDados = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many';
+        const promise = axios.post(urlDados, dados);
+        promise.then(resposta => navigate('/pedido-confirmado'));
+        promise.catch(respota => (alert('deu errado')));
+        location.state = { info };
+    }
 
     return (
         <PageContainer>
@@ -73,7 +94,7 @@ export default function SeatsPage() {
                                     key={acentos.id}
                                     onClick={() => selecionado(acentos.id)}
                                     style={{
-                                        backgroundColor: cor[acentos.id] ? 'red' : '',
+                                        backgroundColor: cor[acentos.id] ? '#0E7D71' : '',
                                         border: cor[acentos.id]
                                             ? '1px solid #0E7D71'
                                             : '1px solid #808F9D',
@@ -83,7 +104,9 @@ export default function SeatsPage() {
                                 </SeatItem>
 
                             ) :
-                                <SeatItemIndisp key={acentos.id} >{acentos.name}</SeatItemIndisp>
+                                <SeatItemIndisp onClick={() => alert('Esse assento não está disponível')} key={acentos.id} >
+                                    {acentos.name}
+                                </SeatItemIndisp>
                         }
                     </>
                     // sem onclick
@@ -109,31 +132,43 @@ export default function SeatsPage() {
                 </CaptionItem>
             </CaptionContainer>
 
-            <FormContainer>
-                <h1>Nome do Comprador:</h1>
-                <input placeholder="Digite seu nome..." />
+            <form onSubmit={mandarProServidor}>
+                <FormContainer >
+                    <label htmlFor="nome">Nome do Comprador:</label>
+                    <input
+                        type="text"
+                        id="nome"
+                        required
+                        value={nome}
+                        onChange={(e) => setnome(e.target.value)}
+                        placeholder="Digite seu nome..."
+                    />
 
-                <h1>CPF do Comprador:</h1>
-                <input placeholder="Digite seu CPF..." />
+                    <label htmlFor="cpf">CPF do Comprador:</label>
+                    <input
+                        type="number"
+                        id="cpf"
+                        required
+                        value={cpf}
+                        onChange={(e) => setcpf(e.target.value)}
+                        placeholder="Digite seu CPF..."
+                    />
 
+                </FormContainer>
 
-            </FormContainer>
+                <Buto>
+                    {/*mandar o post com os dados do comprador esse é o link do post*/}
 
-            <Buto>
-                {/*mandar o post com os dados do comprador esse é o link do post*/}
-
-                <>
-                    <button>
+                    <button type="submit">
                         <p>Reservar Assento(s)</p>
                     </button>
                     {/* criar uma função no butão que manda pro cervidor , dentro da fulçao vericar se foi then, se sim pular pra proxima pagina
                   {/*then 
                      Link to='/pedido-confirmado' style={{ textDecoration: 'none' }} key={horario.date}*/}
+                </Buto>
+            </form>
 
-                </>
-            </Buto>
-
-            <FooterContainer>
+            <FooterContainer >
                 <div>
                     <img src={Filme.posterURL} alt="poster" />
                 </div>
@@ -143,7 +178,7 @@ export default function SeatsPage() {
                 </div>
             </FooterContainer>
 
-        </PageContainer>
+        </PageContainer >
     )
 }
 
@@ -205,7 +240,14 @@ const FormContainer = styled.div`
         margin-bottom: 0px;
     }
 `
+
 const Buto = styled.div`
+
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        
     button {
         align-self: center;
         width: 225px;

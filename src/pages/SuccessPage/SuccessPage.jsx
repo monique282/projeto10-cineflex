@@ -1,24 +1,12 @@
-import axios from "axios";
-import { Link } from "react-router-dom";
+
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styled from "styled-components"
 
 
 export default function SuccessPage() {
-    const [reserva, setreserva] = useState([])
-
-    useEffect(() => {
-        const URL = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many';
-        const promise = axios.get(URL);
-        promise.then((resposta) => {
-            setreserva(resposta);
-            console.log(resposta);
-        }); //deu certo
-        promise.catch((erro) => {
-            console.log(erro.response.data);
-        }); // deu errado
-
-    }, []);
+    const location = useLocation ();
+    const { info } = location.state; 
 
     return (
         <PageContainer>
@@ -26,7 +14,7 @@ export default function SuccessPage() {
 
             <TextContainer>
                 <strong><p>Filme e sessão</p></strong>
-                <p>Tudo em todo lugar ao mesmo tempo</p>
+                <p>{info.Filme}</p>
                 <p>03/03/2023 - 14:00</p>
             </TextContainer>
 
