@@ -36,9 +36,9 @@ if(filmes === undefined){
 
             <ListContainer key={filmes.id}>
                 {filmes.map(filmes => (
-                    <Link to={`/horario/${filmes.id}`}>
+                    <Link to={`/sessoes/${filmes.id}`}>
                         <MovieContainer key={filmes.id}>
-                            <img src={filmes.posterURL} alt="poster" />
+                            <img src={filmes.posterURL} alt="poster" data-test="movie" />
                         </MovieContainer>
                     </Link>
                 )

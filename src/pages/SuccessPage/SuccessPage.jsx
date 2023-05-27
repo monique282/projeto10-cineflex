@@ -1,36 +1,35 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import styled from "styled-components"
 
 
 export default function SuccessPage() {
-    const location = useLocation ();
-    const { info } = location.state; 
+    const location = useLocation (); 
+    const {nome, cpf, dia, Filme, horario} = location.state;
 
     return (
         <PageContainer>
             <h1>Pedido feito  <br />  com sucesso!</h1>
 
-            <TextContainer>
+            <TextContainer data-test="movie-info">
                 <strong><p>Filme e sessão</p></strong>
-                <p>{info.Filme}</p>
-                <p>03/03/2023 - 14:00</p>
+                <p>{Filme}</p>
+                <p>{dia} - {horario}</p>
             </TextContainer>
 
-            <TextContainer>
+            <TextContainer data-test="seats-info">
                 <strong><p>Ingressos</p></strong>
                 <p>Assento 01</p>
                 <p>Assento 02</p>
                 <p>Assento 03</p>
             </TextContainer>
 
-            <TextContainer>
+            <TextContainer data-test="client-info">
                 <strong><p>Comprador</p></strong>
-                <p>Nome: Letícia Chijo</p>
-                <p>CPF: 123.456.789-10</p>
+                <p>Nome: {nome}</p>
+                <p>CPF: {cpf}</p>
             </TextContainer>
-            <Link to='/'  >
+            <Link to='/' data-test="go-home-btn" >
                 <button><p>Voltar para Home</p></button>
             </Link>
 

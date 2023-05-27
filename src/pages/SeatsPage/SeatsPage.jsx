@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import axios from "axios";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function SeatsPage() {
@@ -14,13 +14,13 @@ export default function SeatsPage() {
     const [nome, setnome] = useState('');
     const [cpf, setcpf] = useState('');
     const navigate = useNavigate();
-    const [info, setInfo] = useState(nome, cpf, bancos, dia, Filme, horario);
+
 
     const numApi = useParams();
 
 
     useEffect(() => {
-        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${numApi.horarioSelecionado}/seats`;
+        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${numApi.idSessao}/seats`;
         const promise = axios.get(URL);
         promise.then((resposta) => {
             setacentos(resposta.data.seats);
@@ -76,9 +76,17 @@ export default function SeatsPage() {
         console.log(dados);
         const urlDados = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many';
         const promise = axios.post(urlDados, dados);
-        promise.then(resposta => navigate('/pedido-confirmado'));
+        promise.then(resposta => navigate("/sucesso", {
+            state: {
+                nome: nome,
+                cpf: cpf,
+                dia: dia,
+                Filme: Filme,
+                horario: horario,
+            }
+        }));
         promise.catch(respota => (alert('deu errado')));
-        location.state = { info };
+
     }
 
     return (
@@ -90,7 +98,7 @@ export default function SeatsPage() {
                     <>
                         {
                             acentos.isAvailable === true ? (
-                                <SeatItem
+                                <SeatItem data-test="seat"
                                     key={acentos.id}
                                     onClick={() => selecionado(acentos.id)}
                                     style={{
@@ -104,7 +112,7 @@ export default function SeatsPage() {
                                 </SeatItem>
 
                             ) :
-                                <SeatItemIndisp onClick={() => alert('Esse assento não está disponível')} key={acentos.id} >
+                                <SeatItemIndisp data-test="seat" onClick={() => alert('Esse assento não está disponível')} key={acentos.id} >
                                     {acentos.name}
                                 </SeatItemIndisp>
                         }
@@ -136,6 +144,7 @@ export default function SeatsPage() {
                 <FormContainer >
                     <label htmlFor="nome">Nome do Comprador:</label>
                     <input
+                        data-test="client-name"
                         type="text"
                         id="nome"
                         required
@@ -146,6 +155,7 @@ export default function SeatsPage() {
 
                     <label htmlFor="cpf">CPF do Comprador:</label>
                     <input
+                        data-test="client-cpf"
                         type="number"
                         id="cpf"
                         required
@@ -159,7 +169,7 @@ export default function SeatsPage() {
                 <Buto>
                     {/*mandar o post com os dados do comprador esse é o link do post*/}
 
-                    <button type="submit">
+                    <button type="submit" data-test="book-seat-btn">
                         <p>Reservar Assento(s)</p>
                     </button>
                     {/* criar uma função no butão que manda pro cervidor , dentro da fulçao vericar se foi then, se sim pular pra proxima pagina
@@ -168,7 +178,7 @@ export default function SeatsPage() {
                 </Buto>
             </form>
 
-            <FooterContainer >
+            <FooterContainer data-test="footer" >
                 <div>
                     <img src={Filme.posterURL} alt="poster" />
                 </div>
