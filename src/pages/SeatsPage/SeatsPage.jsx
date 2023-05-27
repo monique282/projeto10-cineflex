@@ -102,7 +102,7 @@ export default function SeatsPage() {
                                     key={acentos.id}
                                     onClick={() => selecionado(acentos.id)}
                                     style={{
-                                        backgroundColor: cor[acentos.id] ? '#0E7D71' : '',
+                                        backgroundColor: cor[acentos.id] ? '#1AAE9E' : '',
                                         border: cor[acentos.id]
                                             ? '1px solid #0E7D71'
                                             : '1px solid #808F9D',
