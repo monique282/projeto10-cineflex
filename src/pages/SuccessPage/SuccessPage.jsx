@@ -4,9 +4,11 @@ import styled from "styled-components"
 
 
 export default function SuccessPage() {
-    const location = useLocation (); 
-    const {nome, cpf, dia, Filme, horario} = location.state;
+    const location = useLocation();
+    const { nome, cpf, dia, Filme, horario, numeros } = location.state;
 
+    const lugares = [numeros];
+    console.log(lugares)
     return (
         <PageContainer>
             <h1>Pedido feito  <br />  com sucesso!</h1>
@@ -19,9 +21,11 @@ export default function SuccessPage() {
 
             <TextContainer data-test="seats-info">
                 <strong><p>Ingressos</p></strong>
-                <p>Assento 01</p>
-                <p>Assento 02</p>
-                <p>Assento 03</p>
+                {numeros.map(numeros => (
+                    <p>Assento {numeros} </p>
+                )
+                )}
+
             </TextContainer>
 
             <TextContainer data-test="client-info">

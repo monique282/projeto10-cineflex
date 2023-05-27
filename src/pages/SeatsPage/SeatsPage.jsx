@@ -13,12 +13,17 @@ export default function SeatsPage() {
     const [bancos, setbancos] = useState({ ids: [] });
     const [nome, setnome] = useState('');
     const [cpf, setcpf] = useState('');
+    const [numeros, setnumeros] = useState({n : []});
     const navigate = useNavigate();
 
 
     const numApi = useParams();
 
+console.log(numeros);
 
+
+    
+    
     useEffect(() => {
         const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${numApi.idSessao}/seats`;
         const promise = axios.get(URL);
@@ -36,19 +41,27 @@ export default function SeatsPage() {
 
     }, []);
 
-    function selecionado(id) {
-        console.log(id);
+    function selecionado(id, numero) {
+        console.log(numero);
         setcor((prevSelecionados) => ({
             ...prevSelecionados,
             [id]: !prevSelecionados[id],
         }));
-        //  let bancos = [...bancos];
+    // no caso isso funciona para poder colocar o id no array e retirar caso a pessoa desclick
         setbancos((prevBancos) => ({
             ...prevBancos,
             ids: prevBancos.ids.includes(id)
                 ? prevBancos.ids.filter((item) => item !== id)
                 : [...prevBancos.ids, id],
         }));
+
+        setnumeros((prevnumeros) => ({
+            ...prevnumeros,
+            n: prevnumeros.n.includes(numero)
+                ? prevnumeros.n.filter((item) => item !== numero)
+                : [...prevnumeros.n, numero],
+        }));
+
     }
 
     console.log(bancos);
@@ -59,15 +72,9 @@ export default function SeatsPage() {
             </PageContainer>
         )
     }
-    // testar para ver se se esta false ou true
 
     function mandarProServidor(e) {
         e.preventDefault();
-        console.log(nome);
-        console.log(cpf);
-        // pegar os dados dos imputs 
-        // uso as variaveis de estado
-        // enviar pro servidor atravez do axios
         const dados = {
             ids: bancos.ids,
             name: nome,
@@ -80,14 +87,17 @@ export default function SeatsPage() {
             state: {
                 nome: nome,
                 cpf: cpf,
-                dia: dia,
-                Filme: Filme,
-                horario: horario,
+                dia: dia.date,
+                Filme: Filme.title,
+                horario: horario.name,
+                numeros: numeros.n,
+                
             }
         }));
         promise.catch(respota => (alert('deu errado')));
 
     }
+    console.log(acentos);
 
     return (
         <PageContainer>
@@ -100,7 +110,7 @@ export default function SeatsPage() {
                             acentos.isAvailable === true ? (
                                 <SeatItem data-test="seat"
                                     key={acentos.id}
-                                    onClick={() => selecionado(acentos.id)}
+                                    onClick={() => selecionado((acentos.id),(acentos.name))}
                                     style={{
                                         backgroundColor: cor[acentos.id] ? '#1AAE9E' : '',
                                         border: cor[acentos.id]
@@ -117,7 +127,6 @@ export default function SeatsPage() {
                                 </SeatItemIndisp>
                         }
                     </>
-                    // sem onclick
 
                 )
                 )}
@@ -167,15 +176,11 @@ export default function SeatsPage() {
                 </FormContainer>
 
                 <Buto>
-                    {/*mandar o post com os dados do comprador esse é o link do post*/}
-
+                
                     <button type="submit" data-test="book-seat-btn">
                         <p>Reservar Assento(s)</p>
                     </button>
-                    {/* criar uma função no butão que manda pro cervidor , dentro da fulçao vericar se foi then, se sim pular pra proxima pagina
-                  {/*then 
-                     Link to='/pedido-confirmado' style={{ textDecoration: 'none' }} key={horario.date}*/}
-                </Buto>
+                    </Buto>
             </form>
 
             <FooterContainer data-test="footer" >
